@@ -4,21 +4,72 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
     <title>NPM Name</title>
   </head>
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    input {
+      padding: 10px;
+      border-block-color: gray;
+      border-radius: 5px;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+    }
+
+    .indicator {
+      background-color: red;
+      height: 15px;
+      width: 15px;
+      border-radius: 50%;
+    }
+
+    .container {
+      margin: auto;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 500px;
+    }
+  </style>
   <body>
     <main>
       <h1>Check Package Name</h1>
-      <input
-        type="text"
-        name="package-name"
-        id="package-name"
-        placeholder="Enter the package name here"
-      />
+      <div class="container">
+        <input
+          type="text"
+          name="package-name"
+          id="package-name"
+          placeholder="Enter the package name here"
+        />
+        <div class="indicator"></div>
+      </div>
     </main>
     <footer>
-        <p>&copy;2023 | DevChaks</p>
+      <p>&copy;2023 | DevChaks</p>
     </footer>
   </body>
+  <script>
+    const input = document.querySelector("input");
+    input.addEventListener("keypress", (ev) => {
+      console.log(ev.target.value);
+    });
+  </script>
 </html>
