@@ -33,11 +33,55 @@
       margin: auto;
     }
 
-    .indicator {
-      background-color: red;
+    .not-available {
+      color: red;
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .not-available:after {
+      display: inline-block;
+      content: "❌"; /* This will render the 'X' */
+      transform: rotate(0deg);
+    }
+
+    .available {
+      display: inline-block;
+      transform: rotate(45deg);
       height: 15px;
-      width: 15px;
+      width: 7px;
+      border-bottom: 4px solid #78b13f;
+      border-right: 4px solid #78b13f;
+    }
+
+    .loading {
+      border: 2px solid #f3f3f3;
       border-radius: 50%;
+      border-top: 2px solid #3498db;
+      width: 15px;
+      height: 15px;
+      -webkit-animation: spin 1s linear infinite;
+      animation: spin 1s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     .container {
@@ -45,6 +89,7 @@
       padding: 10px;
       display: flex;
       justify-content: center;
+      gap: 10px;
       align-items: center;
       max-width: 500px;
     }
@@ -59,7 +104,7 @@
           id="package-name"
           placeholder="Enter the package name here"
         />
-        <div class="indicator"></div>
+        <div id="indicator"></div>
       </div>
     </main>
     <footer>
@@ -68,8 +113,50 @@
   </body>
   <script>
     const input = document.querySelector("input");
+    const availabilityIndicator = document.querySelector("#indicator");
+    const ENDPOINT = "https://registry.npmjs.org/";
+
+    const indicatorClasses = ["available", "not-available", "loading"];
+
+    function updateIndicator(index) {
+      availabilityIndicator.classList.remove(...indicatorClasses);
+      availabilityIndicator.classList.add(indicatorClasses[index]);
+    }
+
+    function useDebounce(timeWindow = 1000) {
+      let timeOut;
+
+      return function (searchValue) {
+        //clear previous timeout
+        //set the loading state
+        updateIndicator(2);
+        clearTimeout(timeOut);
+
+        //start a brand new request again.
+        timeOut = setTimeout(() => {
+          //search for the availability
+          fetch(ENDPOINT + searchValue, {
+            method: "GET",
+            mode: "cors",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              updateIndicator(1);
+            })
+            .catch((error) => {
+              updateIndicator(0);
+            });
+        }, timeWindow);
+      };
+    }
+
+    const searchRepository = useDebounce();
     input.addEventListener("keypress", (ev) => {
-      console.log(ev.target.value);
+      const searchValue = ev.target.value.trim();
+
+      if (searchValue) {
+        searchRepository(searchValue);
+      }
     });
   </script>
 </html>
